@@ -143,7 +143,7 @@ def show_tasks_ui():
     tasks_ui = load_tasks_ui()
 
     if tasks_ui:
-        task_text = "\n".join([f"> {task['description']} ({task['status']}) - {task['date']}" for task in tasks_ui])
+        task_text = "\n".join([f"{task['id']}. {task['description']} ({task['status']}) - {task['date']}" for task in tasks_ui])
     else:
         task_text = "No tasks available."
 
@@ -165,7 +165,6 @@ task_display = tk.Label(
 )
 task_display.pack(fill="both", expand=True)
 
-
 # Creating the add task button, along with the necessary functions, such as add_task_clicked, 'Add' button and so on
 entry = None
 add = None
@@ -173,6 +172,7 @@ done = None
 frame_add = None
 
 
+# ADD TASK BUTTON
 def add_task_btn():
     global entry, add, done, frame_add
     entry = tk.Entry(root, font=("Arial", 16))
@@ -200,6 +200,50 @@ def done_add():
     frame_add.pack_forget()
 
 
+def remove_all_btn():
+    remove_tasks()
+    save_tasks()
+    show_tasks_ui()
+
+
+def exit_btn():
+    root.destroy()
+    exit()
+
+
+remove_entry = None
+remove = None
+done_rmv = None
+frame_remove = None
+
+
+def remove_btn():
+    global remove_entry, remove, done_rmv, frame_remove
+    remove_entry = tk.Entry(root, font=("Arial", 16))
+    remove_entry.pack(pady=20)
+    frame_remove = tk.Frame(root)
+    frame_remove.pack(padx=20, pady=20)
+    remove = tk.Button(frame_remove, text="Remove", command=lambda: remove_task_clicked(remove_entry.get()))
+    remove.grid(row=0, column=0, padx=10)
+    done_rmv = tk.Button(frame_remove, text="✓", command=done_remove)
+    done_rmv.grid(row=0, column=1, padx=10)
+    remove_button.config(state=tk.DISABLED)
+
+
+def remove_task_clicked(task_id):
+    remove_task(task_id)
+    save_tasks()
+    show_tasks_ui()
+
+
+def done_remove():
+    remove_entry.pack_forget()
+    frame_remove.pack_forget()
+    remove.grid_forget()
+    done_rmv.grid_forget()
+    remove_button.config(state=tk.NORMAL)
+
+
 # Creating the frame along with all the buttons needed for the interface
 frame_buttons = tk.Frame(root)
 frame_buttons.pack(padx=20, pady=20)
@@ -209,13 +253,13 @@ add_button.grid(row=0, column=0, padx=10)
 edit_button = tk.Button(frame_buttons, text="Edit task", command=None)
 edit_button.grid(row=0, column=1, padx=10)
 
-remove_button = tk.Button(frame_buttons, text="Remove task", command=None)
+remove_button = tk.Button(frame_buttons, text="Remove task", command=remove_btn)
 remove_button.grid(row=0, column=2, padx=10)
 
-removeAll_button = tk.Button(frame_buttons, text="Remove all tasks", command=None)
+removeAll_button = tk.Button(frame_buttons, text="Remove all tasks", command=remove_all_btn)
 removeAll_button.grid(row=0, column=3, padx=10)
 
-exit_button = tk.Button(frame_buttons, text="Exit", command=None)
+exit_button = tk.Button(frame_buttons, text="Exit", command=exit_btn)
 exit_button.grid(row=0, column=4, padx=10)
 
 # Setting up the icon
